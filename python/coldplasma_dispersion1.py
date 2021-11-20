@@ -19,7 +19,7 @@ omega_e = q*B/me
 omega_o = q*B/mo
 omega_p = q*B/mp
 
-w = np.arange(0, 100*omega_e, 0.001*omega_e) + 0.001
+w = np.arange(0, 10*omega_o, 0.001*omega_o) + 0.001
 
 Xe = (pi_e/w)**2
 Xo = (pi_o/w)**2
@@ -28,16 +28,16 @@ Ye = omega_e/w
 Yo = omega_o/w
 Yp = omega_p/w
 
-""" R = 1 - Xe/(1 + Ye) - Xo/(1 + Yo) """
-R = 1 - Xe/(1 + Ye) - Xp/(1 + Yp)
-""" L = 1 - Xe/(1 - Ye) - Xo/(1 - Yo) """
-L = 1 - Xe/(1 - Ye) - Xp/(1 - Yp)
+R = 1 - Xe/(1 + Ye) - Xo/(1 + Yo)
+""" R = 1 - Xe/(1 + Ye) - Xp/(1 + Yp) """
+L = 1 - Xe/(1 - Ye) - Xo/(1 - Yo)
+""" L = 1 - Xe/(1 - Ye) - Xp/(1 - Yp) """
 
 S = (R + L)*0.5
 D = (R - L)*0.5
 P = 1 - Xe - Xo
 
-theta = 0.5*np.pi
+theta = 0
 
 A = S*(np.sin(theta))**2 + P*(np.cos(theta))**2
 B = R*L*(np.sin(theta))**2 + P*S*(1+(np.cos(theta))**2)
@@ -56,15 +56,18 @@ for i in range(w.size):
 k1 = w/c*n1**0.5
 k2 = w/c*n2**0.5
 
-plt.figure()
-plt.plot(k1, w/omega_e, label="k+")
-plt.plot(k2, w/omega_e, label="k-")
+w2_cutoff = (- (omega_e - omega_o) + ((omega_e - omega_o)**2 + 4*(1 + omega_o/omega_e)*pi_e**2)**0.5)/2
 
+plt.figure()
+plt.plot(k1, w/omega_o, label="k+")
+plt.plot(k2, w/omega_o, label="k-")
+plt.plot(k2, np.ones(k2.size))
+plt.plot(k2, w2_cutoff/omega_o*np.ones(k2.size))
 plt.xscale('log')
 plt.xlabel('k [/m]')
-plt.ylabel(r'$\frac{\omega}{\Omega_e}$')
-plt.xlim(5e-3,1)
-plt.ylim(0, 25)
+plt.ylabel(r'$\frac{\omega}{\Omega_o}$')
+plt.ylim(0, 3.)
 plt.legend()
 plt.show()
-plt.savefig('img.png')
+
+print()
