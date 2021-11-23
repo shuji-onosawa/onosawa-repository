@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib
+import sympy as sp
 import matplotlib.pyplot as plt
 
 
@@ -50,19 +50,25 @@ n2 = 1 - 2*(A - B + C)/(2*A - B - F)
 for i in range(w.size):
     if n1[i] < 0:
         n1[i] = np.nan
+
+for i in range(w.size):
     if n2[i] < 0:
         n2[i] = np.nan
-  
+
 k1 = w/c*n1**0.5
 k2 = w/c*n2**0.5
 
-w2_cutoff = (- (omega_e - omega_o) + ((omega_e - omega_o)**2 + 4*(1 + omega_o/omega_e)*pi_e**2)**0.5)/2
+b = - omega_e - omega_o
+c = omega_e*omega_o - pi_e**2 - pi_o**2
+d = omega_o*pi_e**2 + omega_e*pi_o**2
+sp.var('x')
+s = sp.solve(x**3 + b*x**2 + c*x +d, x)
 
 plt.figure()
 plt.plot(k1, w/omega_o, label="k+")
 plt.plot(k2, w/omega_o, label="k-")
+plt.plot(k2, 116./omega_o*np.ones(k2.size))
 plt.plot(k2, np.ones(k2.size))
-plt.plot(k2, w2_cutoff/omega_o*np.ones(k2.size))
 plt.xscale('log')
 plt.xlabel('k [/m]')
 plt.ylabel(r'$\frac{\omega}{\Omega_o}$')
@@ -70,4 +76,3 @@ plt.ylim(0, 3.)
 plt.legend()
 plt.show()
 
-print()

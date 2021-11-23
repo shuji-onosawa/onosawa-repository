@@ -14,7 +14,7 @@ pi_o = (no*q**2/(eps*mo))**0.5 / (2*np.pi)
 omega_e = q*B/me / (2*np.pi)
 omega_o = q*B/mo / (2*np.pi)
 
-w = np.arange(0,10,0.1)
+w = np.arange(0, 1000*pi_o, 0.01*pi_o)
 
 k = (1 - pi_e**2 *(1 + omega_o/omega_e)/((w + omega_e)*(w - omega_o)))*w**2
 
@@ -25,10 +25,8 @@ for i in range(100):
 k2 = np.power(k, np.full(k.size, 0.5))
 
 plt.figure()
-plt.plot(k/c, w)
+plt.plot(k/c, w/pi_o)
 plt.xscale('log')
-plt.xlim(0.1,4)
-plt.ylim(0, 3)
 plt.xlabel('$k[/m]$')
 plt.ylabel('$w [Hz]$')
 plt.show()
