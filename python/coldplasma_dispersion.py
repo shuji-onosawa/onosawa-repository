@@ -17,7 +17,7 @@ omega_e = q*B/me
 omega_o = q*B/mo
 omega_p = q*B/mp
 
-w = np.arange(0, 100*omega_e, 0.001*omega_e) + 0.001
+w = np.arange(0, 10000*omega_e, 0.001*omega_e) + 0.001
 
 Xe = (pi_e/w)**2
 Xo = (pi_o/w)**2

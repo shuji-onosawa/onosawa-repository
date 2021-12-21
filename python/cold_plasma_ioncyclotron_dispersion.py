@@ -14,7 +14,7 @@ pi_o = (no*q**2/(eps*mo))**0.5 / (2*np.pi)
 omega_e = q*B/me / (2*np.pi)
 omega_o = q*B/mo / (2*np.pi)
 
-w = np.arange(0, 1000*pi_o, 0.01*pi_o)
+w = np.arange(0, 10000*pi_o, 0.01*pi_o)
 
 k = (1 - pi_e**2 *(1 + omega_o/omega_e)/((w + omega_e)*(w - omega_o)))*w**2
 

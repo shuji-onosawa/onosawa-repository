@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-n = 1e+11
+n = 1e+11/25.
 q = 1.6e-19
 eps = 8.9e-12
 me = 9.1e-31
@@ -56,6 +56,7 @@ k1_90, k2_90 = w/c*n1_90, w/c*n2_90
 plt.figure()
 plt.plot(k1_0, w/abs(omega_e), label=r"$k+ \theta=0$")
 plt.plot(k2_0, w/abs(omega_e), label=r"$k- \theta=0$")
+plt.plot(k2_90, pi_e/abs(omega_e)*np.ones(w.size), linestyle='--',label="fp")
 plt.xscale('log')
 plt.xlabel('k [/m]')
 plt.ylabel(r'$\omega/\Omega_e$')
@@ -86,9 +87,10 @@ w_uh = (pi_e**2 + omega_e**2)**0.5
 plt.figure()
 plt.plot(k1_90, w/abs(omega_e), label=r"$k+ \theta =90$")
 plt.plot(k2_90, w/abs(omega_e), label=r"$k- \theta =90$")
-plt.plot(k2_90, w_uh/abs(omega_e)*np.ones(w.size), label="upper hybrid resonance")
-plt.plot(k2_90, wR/abs(omega_e)*np.ones(w.size), label="cut off1")
-plt.plot(k2_90, wL/abs(omega_e)*np.ones(w.size), label="cut off2")
+plt.plot(k2_90, w_uh/abs(omega_e)*np.ones(w.size), linestyle='--',label="upper hybrid resonance")
+plt.plot(k2_90, pi_e/abs(omega_e)*np.ones(w.size), linestyle='--',label="fp")
+plt.plot(k2_90, wR/abs(omega_e)*np.ones(w.size), linestyle='--',label="cut off1")
+plt.plot(k2_90, wL/abs(omega_e)*np.ones(w.size), linestyle='--',label="cut off2")
 plt.xscale('log')
 plt.xlabel('k [/m]')
 plt.ylabel(r'$\omega/\Omega_e$')
