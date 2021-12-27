@@ -1,17 +1,20 @@
 from math import pi
 import numpy as np
 import matplotlib.pyplot as plt
-
+#event1 parameter
 ne = 6e+7
 nh = 0.46*ne
 nhe = 0.11*ne
 no = 0.43*ne
 q = 1.6e-19
 eps = 8.9e-12
+myu = 1.3e-6
+
 me = 9.1e-31
 mh = 1.7e-27
 mhe = 6.7e-27
 mo = 2.7e-26
+rho = mo*no + mh*nh + mhe*nhe
 B0 = 9e-6
 c = 3e+8
 
@@ -23,10 +26,6 @@ omega_e = -q*B0/me
 omega_h = q*B0/mh
 omega_he = q*B0/mhe
 omega_o = q*B0/mo
-
-theta = 0
-alpha = 80
-w = abs(omega_o)*np.arange(0.001, 20, 0.001) + 0.1
 
 def dispersion(theta, w):
     Xe = (pi_e/w)**2
@@ -68,7 +67,6 @@ def dispersion(theta, w):
     l2 = np.nan*np.zeros(w.size)
 
     j = 1j
-    right = [0, 0, 0]
     for i in range(w.size):
         s = S[i]
         d = D[i]
@@ -77,13 +75,13 @@ def dispersion(theta, w):
         N2 = n2[i]
         Ex_to_Ey1 = j*d*(p - N1*(np.sin(theta))**2)/(s*p - s*N1*(np.sin(theta))**2 - p*N1*(np.cos(theta))**2)
         Ex_to_Ey2 = j*d*(p - N2*(np.sin(theta))**2)/(s*p - s*N2*(np.sin(theta))**2 - p*N2*(np.cos(theta))**2)
-        if np.angle(Ex_to_Ey1) > 0:
+        if (np.angle(Ex_to_Ey1) > 0) and (np.angle(Ex_to_Ey1) < np.pi):
             L1[i] = n1[i]
         if np.angle(Ex_to_Ey1) < 0:
             R1[i] = n1[i]
         if (np.angle(Ex_to_Ey1) == 0) or (np.angle(Ex_to_Ey1) == np.pi):
             l1[i] = n1[i]    
-        if np.angle(Ex_to_Ey2) > 0:
+        if (np.angle(Ex_to_Ey2) > 0) and (np.angle(Ex_to_Ey2) < np.pi):
             L2[i] = n2[i]
         if np.angle(Ex_to_Ey2) < 0:
             R2[i] = n2[i]
@@ -99,53 +97,62 @@ def dispersion(theta, w):
 
     return kL1, kL2, kR1, kR2, kl1, kl2
 
+theta = np.radians(30)
+alpha = 50
+
+omega_s = abs(omega_h)
+w = omega_s*np.arange(0.001, 10, 0.001) 
+
 kL1, kL2, kR1, kR2, kl1, kl2 = dispersion(theta, w)
-
-#v = (w + omega_o)/k2/np.cos(np.radians(alpha - theta))
-#Eo = mo*v**2/2/q
-#cm = plt.cm.get_cmap('RdYlBu')
-
-plt.figure()
-plt.plot(kL1, w/abs(omega_o), label = 'L', color = 'orange')
-plt.plot(kL2, w/abs(omega_o), color = 'orange')
-plt.plot(kR1, w/abs(omega_o), label = 'R', color = 'blue')
-plt.plot(kR2, w/abs(omega_o), color = 'blue')
-plt.plot(kL1, w/abs(omega_o), label = 'l', color = 'k')
-plt.plot(kL1, w/abs(omega_o), color = 'k')
-plt.hlines(omega_h/omega_o, 0, 0.002, linestyles='dashed')
-plt.hlines(omega_he/omega_o, 0, 0.002, linestyles='dashed')
-plt.hlines(omega_o/omega_o, 0, 0.002, linestyles='dashed')
-plt.xscale('log')
-plt.xlabel('k [/m]')
-plt.ylabel(r'$\omega/\Omega_o$')
-#plt.colorbar(label='Energy [eV]')
-plt.legend()
-plt.rcParams["font.size"] = 18
-plt.show()
-
-w = abs(omega_e)*np.arange(1e-2, 4, 1e-2) + 0.1
-kL1, kL2, kR1, kR2, kl1, kl2 = dispersion(theta, w)
-
-#v = (w + omega_o)/k2/np.cos(np.radians(alpha - theta))
-#Eo = mo*v**2/2
-#cm = plt.cm.get_cmap('RdYlBu')
-
-Va = B0*c*eps**0.5/(mo*n)**0.5
+va = B0/(myu*rho)**0.5
 wuh = (omega_e**2 + pi_e**2)**0.5
-wlh = (omega_e**2 *omega_o**2 *(1 + pi_o**2/omega_o**2)/(omega_e**2 + pi_e**2))**0.5
+wlh = (pi_o**2 / (1 + pi_e**2/omega_e**2 ))**0.5
+kL1, kL2, kR1, kR2, kl1, kl2 = kL1*va/omega_s, kL2*va/omega_s, kR1*va/omega_s, kR2*va/omega_s, kl1*va/omega_s, kl2*va/omega_s
+
 plt.figure()
-plt.plot(kL1, w/abs(omega_e), label = 'L', color = 'orange')
-plt.plot(kL2, w/abs(omega_e), color = 'orange')
-plt.plot(kR1, w/abs(omega_e), label = 'R', color = 'blue')
-plt.plot(kR2, w/abs(omega_e), color = 'blue')
-plt.plot(kL1, w/abs(omega_e), label = 'l', color = 'k')
-plt.plot(kL1, w/abs(omega_e), color = 'k')
-plt.hlines(pi_e/abs(omega_e), 0, 1, colors='black', linestyles='dashed')
-plt.hlines(1, 0, 1, colors='black', linestyles='dashed')
-plt.hlines(wuh/abs(omega_e), 0, 1, colors='black', linestyles='dashed')
+plt.rcParams["font.size"] = 14
+plt.plot(kL1, w/omega_s, label = 'L', color = 'orange')
+plt.plot(kL2, w/omega_s, color = 'orange')
+plt.plot(kR1, w/omega_s, label = 'R', color = 'blue')
+plt.plot(kR2, w/omega_s, color = 'blue')
+#plt.plot(w/omega_s, w/omega_s, label = 'Alfven wave')
+#plt.plot(kL1, w/abs(omega_o), label = 'l', color = 'k')
+#plt.plot(kL1, w/abs(omega_o), color = 'k')
+#plt.hlines(omega_h/omega_s, 0, 1, linestyles='dashed')
+#plt.hlines(omega_he/omega_s, 0, 1, linestyles='dashed')
+#plt.hlines(omega_o/omega_s, 0, 1, linestyles='dashed')
+#plt.hlines(-omega_e/omega_s, 0, 1, linestyles='dashed')
+#plt.hlines(pi_h/omega_s, 0, 1, linestyles='dashed')
+#plt.hlines(pi_he/omega_s, 0, 1, linestyles='dashed')
+#plt.hlines(pi_o/omega_s, 0, 1, linestyles='dashed')
+#plt.hlines(wuh/omega_s, 0, 1, colors='black', linestyles='dashed')
+#plt.hlines(wlh/omega_s, 0, 1, colors='black', linestyles='dashed')
 plt.xscale('log')
-plt.xlabel('k [/m]')
-plt.ylabel(r'$\omega/\Omega_e$')
+plt.xlabel(r'$kV_a / \Omega_p$')
+plt.ylabel(r'$\omega/\Omega_p$')
 plt.legend()
 plt.show()
+""" 
+v1 = (w + omega_o)/kL1/np.cos(np.radians(alpha - theta))
+v2 = (w + omega_o)/kL2/np.cos(np.radians(alpha - theta))
+Eo1 = mo*v1**2/2/q
+Eo2 = mo*v2**2/2/q
+cm = plt.cm.get_cmap('RdYlBu')
+plt.figure()
+plt.scatter(kL1, w/omega_o, c=Eo1, cmap=cm)
+plt.scatter(kL2, w/omega_o, c=Eo2, cmap=cm)
+plt.xlabel('$k [/m]$')
+plt.ylabel('$\omega / \Omega_e$')
+plt.xscale('log')
+plt.colorbar(label='Energy [eV]')
+plt.rcParams["font.size"] = 18
+plt.show() 
 
+w = 0.999*omega_o*np.ones(1)
+kL1, kL2, kR1, kR2, kl1, kl2 = dispersion(theta, w)
+v1 = (w + omega_o)/kL1/np.cos(np.radians(alpha - theta))
+v2 = (w + omega_o)/kL2/np.cos(np.radians(alpha - theta))
+Eo1 = mo*v1**2/2/q
+Eo2 = mo*v2**2/2/q
+print(Eo1)
+print(Eo2) """
