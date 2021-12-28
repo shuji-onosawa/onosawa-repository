@@ -97,7 +97,7 @@ def dispersion(theta, w):
 
     return kL1, kL2, kR1, kR2, kl1, kl2
 
-theta = np.radians(30)
+theta = np.radians(0)
 alpha = 50
 
 omega_s = abs(omega_h)
