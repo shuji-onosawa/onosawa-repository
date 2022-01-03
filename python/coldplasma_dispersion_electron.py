@@ -1,7 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+<<<<<<< HEAD
 n = 1e+11/25.
+=======
+n = 0.3e+9
+>>>>>>> 44c42c3b706c54ec05d8897cae8f39ba70887dc3
 q = 1.6e-19
 eps = 8.9e-12
 me = 9.1e-31
@@ -13,8 +17,8 @@ c = 3e+8
 pi_e = (n*q**2/(eps*me))**0.5
 omega_e = -q*B/me
 
-
-w = np.arange(0, 100*abs(omega_e), 0.01*abs(omega_e)) + 0.1
+theta = np.degrees(60)
+w = np.arange(0, 3*abs(omega_e), 0.001*abs(omega_e))
 
 def dispersion(theta, w):
     Xe = (pi_e/w)**2
@@ -32,27 +36,51 @@ def dispersion(theta, w):
     C = P*R*L
     F = (B**2 - 4*A*C)**0.5
 
-    n1 = 1 - 2*(A - B + C)/(2*A - B + F)
-    n2 = 1 - 2*(A - B + C)/(2*A - B - F)
+    n1 = (B + F)/(2*A)
+    n2 = (B - F)/(2*A)
     for i in range(w.size):
         if n1[i] < 0:
             n1[i] = np.nan
     for i in range(w.size):
         if n2[i] < 0:
             n2[i] = np.nan
-    
-    return n1,n2
+    L1 = np.nan*np.zeros(w.size)
+    L2 = np.nan*np.zeros(w.size)
+    R1 = np.nan*np.zeros(w.size)
+    R2 = np.nan*np.zeros(w.size)
+    l1 = np.nan*np.zeros(w.size)
+    l2 = np.nan*np.zeros(w.size)
 
-n1_0, n2_0 = dispersion(0, w)
-n1_30, n2_30 = dispersion(np.pi/6, w)
-n1_60, n2_60 = dispersion(np.pi/3, w)
-n1_90, n2_90 = dispersion(np.pi/2, w)
+    j = 1j
+    for i in range(w.size):
+        s = S[i]
+        d = D[i]
+        p = P[i]
+        N1 = n1[i]
+        N2 = n2[i]
+        Ex_to_Ey1 = j*d*(p - N1*(np.sin(theta))**2)/(s*p - s*N1*(np.sin(theta))**2 - p*N1*(np.cos(theta))**2)
+        Ex_to_Ey2 = j*d*(p - N2*(np.sin(theta))**2)/(s*p - s*N2*(np.sin(theta))**2 - p*N2*(np.cos(theta))**2)
+        if np.angle(Ex_to_Ey1) > 0:
+            L1[i] = n1[i]
+        if np.angle(Ex_to_Ey1) < 0:
+            R1[i] = n1[i]
+        if (np.angle(Ex_to_Ey1) == 0) or (np.angle(Ex_to_Ey1) == np.pi):
+            l1[i] = n1[i]    
+        if np.angle(Ex_to_Ey2) > 0:
+            L2[i] = n2[i]
+        if np.angle(Ex_to_Ey2) < 0:
+            R2[i] = n2[i]
+        if (np.angle(Ex_to_Ey2) == 0) or (np.angle(Ex_to_Ey2) == np.pi):
+            l2[i] = n2[i]        
 
-k1_0, k2_0 = w/c*n1_0, w/c*n2_0
-k1_30, k2_30 = w/c*n1_30, w/c*n2_30
-k1_60, k2_60 = w/c*n1_60, w/c*n2_60
-k1_90, k2_90 = w/c*n1_90, w/c*n2_90
+    kL1 = w/c*np.sqrt(L1)
+    kL2 = w/c*np.sqrt(L2)
+    kR1 = w/c*np.sqrt(R1)
+    kR2 = w/c*np.sqrt(R2)
+    kl1 = w/c*np.sqrt(l1)
+    kl2 = w/c*np.sqrt(l2)
 
+<<<<<<< HEAD
 plt.figure()
 plt.plot(k1_0, w/abs(omega_e), label=r"$k+ \theta=0$")
 plt.plot(k2_0, w/abs(omega_e), label=r"$k- \theta=0$")
@@ -62,25 +90,48 @@ plt.xlabel('k [/m]')
 plt.ylabel(r'$\omega/\Omega_e$')
 plt.legend()
 plt.show()
+=======
+    return kL1, kL2, kR1, kR2, kl1, kl2
+    
+kL1_0, kL2_0, kR1_0, kR2_0, kl1_0, kl2_0 = dispersion(np.degrees(0), w)
+kL1_45, kL2_45, kR1_45, kR2_45, kl1_45, kl2_45 = dispersion(np.degrees(45), w)
+kL1_90, kL2_90, kR1_90, kR2_90, kl1_90, kl2_90 = dispersion(np.degrees(90), w)
+wL =(omega_e + (omega_e**2 + 4*pi_e**2)**0.5)/2
+wR =(-omega_e + (omega_e**2 + 4*pi_e**2)**0.5)/2
+w_uh = (pi_e**2 + omega_e**2)**0.5
+>>>>>>> 44c42c3b706c54ec05d8897cae8f39ba70887dc3
+
+print(pi_e/omega_e)
+print(wL/omega_e)
+print(wR/omega_e)
+print(w_uh/omega_e)
 
 plt.figure()
-plt.plot(k1_30, w/abs(omega_e), label=r"$k+ \theta=30$")
-plt.plot(k2_30, w/abs(omega_e), label=r"$k- \theta=30$")
+#plt.rcParams["font.size"] = 18
+plt.plot(kL1_0, w/abs(omega_e), label = 'L0', color = 'orange')
+plt.plot(kL2_0, w/abs(omega_e), color = 'orange')
+plt.plot(kL1_45, w/abs(omega_e), label = 'L45', color = 'gold')
+plt.plot(kL2_45, w/abs(omega_e), color = 'gold')
+plt.plot(kL1_90, w/abs(omega_e), label = 'L90', color = 'red')
+plt.plot(kL2_90, w/abs(omega_e), color = 'red')
+plt.plot(kR1_0, w/abs(omega_e), label = 'R0', color = 'blue')
+plt.plot(kR2_0, w/abs(omega_e), color = 'blue')
+plt.plot(kR1_45, w/abs(omega_e), label = 'R45', color = 'slateblue')
+plt.plot(kR2_45, w/abs(omega_e), color = 'slateblue')
+plt.plot(kR1_90, w/abs(omega_e), label = 'R90', color = 'purple')
+plt.plot(kR2_90, w/abs(omega_e), color = 'purple')
+plt.hlines(pi_e/abs(omega_e), 0.0001, 1, linestyles="solid", label='fp')
+plt.hlines(1, 0.0001, 1, linestyles="solid", colors='k')
+plt.hlines(wL/abs(omega_e), 0.0001, 1, linestyles="dashed", label='L cutoff')
+plt.hlines(wR/abs(omega_e), 0.0001, 1, linestyles="dashdot", label='R cutoff')
+plt.hlines(w_uh/abs(omega_e), 0.0001, 1, linestyles="dotted", label='upper hybrid f')
 plt.xscale('log')
 plt.xlabel('k [/m]')
 plt.ylabel(r'$\omega/\Omega_e$')
 plt.legend()
 plt.show()
 
-plt.figure()
-plt.plot(k1_60, w/abs(omega_e), label=r"$k+ \theta=60$")
-plt.plot(k2_60, w/abs(omega_e), label=r"$k- \theta=60$")
-plt.xscale('log')
-plt.xlabel('k [/m]')
-plt.ylabel(r'$\omega/\Omega_e$')
-plt.legend()
-plt.show()
-
+<<<<<<< HEAD
 wL =(omega_e + (omega_e**2 + 4*pi_e**2)**0.5)/2
 wR =(-omega_e + (omega_e**2 + 4*pi_e**2)**0.5)/2
 w_uh = (pi_e**2 + omega_e**2)**0.5
@@ -96,3 +147,7 @@ plt.xlabel('k [/m]')
 plt.ylabel(r'$\omega/\Omega_e$')
 plt.legend()
 plt.show()
+=======
+
+
+>>>>>>> 44c42c3b706c54ec05d8897cae8f39ba70887dc3
