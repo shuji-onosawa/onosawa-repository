@@ -1,7 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+<<<<<<< HEAD
+n = 1e+11/25.
+=======
 n = 0.3e+9
+>>>>>>> 44c42c3b706c54ec05d8897cae8f39ba70887dc3
 q = 1.6e-19
 eps = 8.9e-12
 me = 9.1e-31
@@ -76,6 +80,17 @@ def dispersion(theta, w):
     kl1 = w/c*np.sqrt(l1)
     kl2 = w/c*np.sqrt(l2)
 
+<<<<<<< HEAD
+plt.figure()
+plt.plot(k1_0, w/abs(omega_e), label=r"$k+ \theta=0$")
+plt.plot(k2_0, w/abs(omega_e), label=r"$k- \theta=0$")
+plt.plot(k2_90, pi_e/abs(omega_e)*np.ones(w.size), linestyle='--',label="fp")
+plt.xscale('log')
+plt.xlabel('k [/m]')
+plt.ylabel(r'$\omega/\Omega_e$')
+plt.legend()
+plt.show()
+=======
     return kL1, kL2, kR1, kR2, kl1, kl2
     
 kL1_0, kL2_0, kR1_0, kR2_0, kl1_0, kl2_0 = dispersion(np.degrees(0), w)
@@ -84,6 +99,7 @@ kL1_90, kL2_90, kR1_90, kR2_90, kl1_90, kl2_90 = dispersion(np.degrees(90), w)
 wL =(omega_e + (omega_e**2 + 4*pi_e**2)**0.5)/2
 wR =(-omega_e + (omega_e**2 + 4*pi_e**2)**0.5)/2
 w_uh = (pi_e**2 + omega_e**2)**0.5
+>>>>>>> 44c42c3b706c54ec05d8897cae8f39ba70887dc3
 
 print(pi_e/omega_e)
 print(wL/omega_e)
@@ -115,5 +131,23 @@ plt.ylabel(r'$\omega/\Omega_e$')
 plt.legend()
 plt.show()
 
+<<<<<<< HEAD
+wL =(omega_e + (omega_e**2 + 4*pi_e**2)**0.5)/2
+wR =(-omega_e + (omega_e**2 + 4*pi_e**2)**0.5)/2
+w_uh = (pi_e**2 + omega_e**2)**0.5
+plt.figure()
+plt.plot(k1_90, w/abs(omega_e), label=r"$k+ \theta =90$")
+plt.plot(k2_90, w/abs(omega_e), label=r"$k- \theta =90$")
+plt.plot(k2_90, w_uh/abs(omega_e)*np.ones(w.size), linestyle='--',label="upper hybrid resonance")
+plt.plot(k2_90, pi_e/abs(omega_e)*np.ones(w.size), linestyle='--',label="fp")
+plt.plot(k2_90, wR/abs(omega_e)*np.ones(w.size), linestyle='--',label="cut off1")
+plt.plot(k2_90, wL/abs(omega_e)*np.ones(w.size), linestyle='--',label="cut off2")
+plt.xscale('log')
+plt.xlabel('k [/m]')
+plt.ylabel(r'$\omega/\Omega_e$')
+plt.legend()
+plt.show()
+=======
 
 
+>>>>>>> 44c42c3b706c54ec05d8897cae8f39ba70887dc3

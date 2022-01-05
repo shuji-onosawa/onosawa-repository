@@ -9,10 +9,14 @@ mo = 2.7e-26
 q = 1.6e-19
 c = 3e+8
 
+<<<<<<< HEAD
 pi_e = (n*q**2/(eps*me))**0.5
 pi_o = (n*q**2/(eps*mo))**0.5
 omega_e = -q*B0/me
 omega_o = q*B0/mo
+=======
+w = np.arange(0, 10000*pi_o, 0.01*pi_o)
+>>>>>>> 18b93b6054dd6db28cc30c710ee1acd0a58e2f6d
 
 w = abs(omega_o)*np.arange(0.01, 6, 0.01) + 0.1
 

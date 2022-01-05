@@ -19,7 +19,11 @@ omega_e = q*B/me
 omega_o = q*B/mo
 omega_p = q*B/mp
 
+<<<<<<< HEAD:python/resonance_velocity_ioncyclotron.py
 w = np.arange(0.99*omega_o, omega_o, 0.001*omega_o) 
+=======
+w = np.arange(0, 10000*omega_e, 0.001*omega_e) + 0.001
+>>>>>>> 18b93b6054dd6db28cc30c710ee1acd0a58e2f6d:python/coldplasma_dispersion.py
 
 Xe = (pi_e/w)**2
 Xo = (pi_o/w)**2
