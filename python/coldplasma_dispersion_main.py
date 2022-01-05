@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy.core.function_base import linspace
 #event1 parameter
 ne = 6e+7
 nh = 0.46*ne
@@ -96,18 +97,16 @@ def dispersion(theta, w):
 
     return kL1, kL2, kR1, kR2, kl1, kl2
 
+#dispersion calc
 theta = 60
-
-omega_s = omega_h
-w = omega_s*np.arange(5, 9, 0.0001) 
+omega_s = omega_o
+w = omega_s*np.arange(0.1, 16, 0.0001) 
 
 kL1, kL2, kR1, kR2, kl1, kl2 = dispersion(np.deg2rad(theta), w)
 va = B0/(myu*rho)**0.5
 wuh = (omega_e**2 + pi_e**2)**0.5
 wlh = ((pi_h**2 + pi_he**2 + pi_o**2) / (1 + (pi_e/omega_e)**2 ))**0.5
-#kL1, kL2, kR1, kR2, kl1, kl2 = kL1*va/omega_s, kL2*va/omega_s, kR1*va/omega_s, kR2*va/omega_s, kl1*va/omega_s, kl2*va/omega_s
 
-v = (2*q*25/mo)**0.5
 omega_s = 2*np.pi
 plt.figure()
 plt.rcParams["font.size"] = 14
@@ -115,68 +114,53 @@ plt.plot(kL1, w/omega_s, label = 'L', color = 'red')
 plt.plot(kL2, w/omega_s, color = 'red')
 plt.plot(kR1, w/omega_s, label = 'R', color = 'blue')
 plt.plot(kR2, w/omega_s, color = 'blue')
-plt.hlines(omega_h/omega_s, 0, 1, linestyles='dashed')
-plt.hlines(omega_he/omega_s, 0, 1, linestyles='dashed')
-plt.hlines(omega_o/omega_s, 0, 1, linestyles='dashed')
+plt.plot(w/c, w/omega_s, label = 'w = ck', linestyle = 'dashed',color = 'gold')
+plt.hlines(omega_h/omega_s, 0, 1, linestyles='dashed', colors = 'k')
+plt.hlines(omega_he/omega_s, 0, 1, linestyles='dashed', colors = 'k')
+plt.hlines(omega_o/omega_s, 0, 1, linestyles='dashed', colors = 'k')
 #plt.hlines(-omega_e/omega_s, 0, 1, linestyles='dashed')
 #plt.hlines(pi_h/omega_s, 0, 1, linestyles='dashed')
 #plt.hlines(pi_he/omega_s, 0, 1, linestyles='dashed')
 #plt.hlines(pi_o/omega_s, 0, 1, linestyles='dashed')
-#plt.hlines(wuh/omega_s, 0, 1, colors='black', linestyles='dashed')
-plt.hlines(wlh/omega_s, 0, 1, colors='black', linestyles='dashed')
+#plt.hlines(wlh/omega_s, 0, 1, colors='black', linestyles='dashed')
 plt.xscale('log')
 plt.xlabel(r'$k [/m]$')
 plt.ylabel(r'$\omega [Hz]$')
 plt.legend()
 plt.show()
 
-print(pi_h/omega_h)
+#energy calc
 #pitch angle: H+:10-150, O+:20-120
-omega = omega_h
-m = mh
-v10_100 = (w - omega)/kL1/np.cos(np.radians(100 - theta))
-v10_110 = (w - omega)/kL1/np.cos(np.radians(110 - theta))
-v10_120 = (w - omega)/kL1/np.cos(np.radians(120 - theta))
-#v10_130 = (w - omega)/kL1/np.cos(np.radians(130 - theta))
-#v10_140 = (w - omega)/kL1/np.cos(np.radians(140 - theta))
-#v10_150 = (w - omega)/kL1/np.cos(np.radians(150 - theta))
+alphaH = np.arange(10, 160, 20)
+alphaO = np.arange(20, 130, 20)
+v1 = np.nan*np.empty((alphaH.size, w.size))
+v2 = v1
+E1 = v1
+E2 = v1
+omega = omega_o
+m = mo
+alpha = alphaO
+for i in range(alpha.size):
+    v1[i,:] = (w - omega)/kL1/np.cos(np.radians(alpha[i] - theta))       
+    v2[i,:] = (w - omega)/kL2/np.cos(np.radians(alpha[i] - theta)) 
+    for j in range(w.size):
+        if v1[i,j] > 0:
+            E1[i,j] = (m*v1[i,j]**2)/2/q
+        if v2[i,j] > 0:
+            E2[i,j] = (m*v2[i,j]**2)/2/q
 
-v20_100 = (w - omega)/kL2/np.cos(np.radians(100 - theta))
-v20_110 = (w - omega)/kL2/np.cos(np.radians(110 - theta))
-v20_120 = (w - omega)/kL2/np.cos(np.radians(120 - theta))
-#v20_130 = (w - omega)/kL2/np.cos(np.radians(130 - theta))
-#v20_140 = (w - omega)/kL2/np.cos(np.radians(140 - theta))
-#v20_150 = (w - omega)/kL2/np.cos(np.radians(150 - theta))
-        
-E10_100 = (m*v10_100**2)/2/q
-E10_110 = (m*v10_110**2)/2/q
-E10_120 = (m*v10_120**2)/2/q
-#E10_130 = (m*v10_130**2)/2/q
-#E10_140 = (m*v10_140**2)/2/q
-#E10_150 = (m*v10_150**2)/2/q
-
-E20_100 = (m*v20_100**2)/2/q
-E20_110 = (m*v20_110**2)/2/q
-E20_120 = (m*v20_120**2)/2/q
-#E20_130 = (m*v20_130**2)/2/q
-#E20_140 = (m*v20_140**2)/2/q
-#E20_150 = (m*v20_150**2)/2/q
-
-cm = plt.cm.get_cmap('RdYlBu')
 plt.figure()
 plt.rcParams["font.size"] = 14
-plt.plot(E10_100, w/omega_s, label = '100°', color = 'blue')
-plt.plot(E20_100, w/omega_s, color = 'blue')
-plt.plot(E10_110, w/omega_s, label = '110°', color = 'red')
-plt.plot(E20_110, w/omega_s, color = 'red')
-plt.plot(E10_120, w/omega_s, label = '120°', color = 'green')
-plt.plot(E20_120, w/omega_s, color = 'green')
-plt.hlines(omega_h/omega_s, 0, 1e12, colors = 'k', linestyles='solid')
-plt.hlines(omega_he/omega_s, 0, 1e12, colors = 'k',linestyles='solid')
-plt.hlines(omega_o/omega_s, 0, 1e12, colors = 'k',linestyles='solid')
+for i in range(alpha.size):
+    plt.plot(E1[i,:], w/omega_s, label = str(alpha[i])+'°', color = (1.0 - 0.08*i, 0, 0.08*i))
+plt.hlines(omega_h/omega_s, 0, 1e12, colors = 'k', linestyles='dashed')
+plt.hlines(omega_he/omega_s, 0, 1e12, colors = 'k',linestyles='dashed')
+plt.hlines(omega_o/omega_s, 0, 1e12, colors = 'k',linestyles='dashed')
 plt.xlabel('$Energy [eV]$')
 plt.ylabel('$\omega [Hz]$')
 plt.xscale('log')
+plt.xlim(0.1, 1e4)
+plt.title('$\theta$=' + str(theta) + '°')
 plt.legend()
 plt.show() 
 
