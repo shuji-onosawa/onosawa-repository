@@ -97,35 +97,53 @@ def dispersion(theta, w):
 
     return kL1, kL2, kR1, kR2, kl1, kl2
 
-#dispersion calc
-theta = 60
-omega_s = omega_o
-w = omega_s*np.arange(0.1, 16, 0.0001) 
+def k_energy(w, E, theta, alpha):
+    k_energy = (w - omega_o)/((2*E/mo)*np.cos(np.deg2rad(theta))*np.cos(np.deg2rad(alpha)))
+    return k_energy
 
-kL1, kL2, kR1, kR2, kl1, kl2 = dispersion(np.deg2rad(theta), w)
-va = B0/(myu*rho)**0.5
+#dispersion calc
+omega_s = omega_o
+w = omega_s*np.arange(0.1, 1.2, 0.0001) 
+
+va = 1e7
 wuh = (omega_e**2 + pi_e**2)**0.5
 wlh = ((pi_h**2 + pi_he**2 + pi_o**2) / (1 + (pi_e/omega_e)**2 ))**0.5
+kL1_0, kL2_0, kR1_0, kR2_0, kl1, kl2 = dispersion(np.deg2rad(0), w)
+#kL1_30, kL2_30, kR1_30, kR2_30, kl1, kl2 = dispersion(np.deg2rad(30), w)
+kL1_60, kL2_60, kR1_60, kR2_60, kl1, kl2 = dispersion(np.deg2rad(60), w)
 
 omega_s = 2*np.pi
 plt.figure()
 plt.rcParams["font.size"] = 14
-plt.plot(kL1, w/omega_s, label = 'L', color = 'red')
-plt.plot(kL2, w/omega_s, color = 'red')
-plt.plot(kR1, w/omega_s, label = 'R', color = 'blue')
-plt.plot(kR2, w/omega_s, color = 'blue')
-plt.plot(w/c, w/omega_s, label = 'w = ck', linestyle = 'dashed',color = 'gold')
-plt.hlines(omega_h/omega_s, 0, 1, linestyles='dashed', colors = 'k')
-plt.hlines(omega_he/omega_s, 0, 1, linestyles='dashed', colors = 'k')
-plt.hlines(omega_o/omega_s, 0, 1, linestyles='dashed', colors = 'k')
+plt.plot(kL1_0/omega_s, w/omega_s, label = 'L0°', color = 'red')
+plt.plot(kL2_0/omega_s, w/omega_s, color = 'red')
+#plt.plot(kL1_30/omega_s, w/omega_s, label = 'L30°', color = 'orangered')
+#plt.plot(kL2_30/omega_s, w/omega_s, color = 'orangered')
+plt.plot(kL1_60/omega_s, w/omega_s, label = 'L60°', color = 'darkorange')
+plt.plot(kL2_60/omega_s, w/omega_s, color = 'darkorange')
+#plt.plot(kR1_0/omega_s, w/omega_s, label = 'R0°', color = 'blue')
+#plt.plot(kR2_0/omega_s, w/omega_s, color = 'blue')
+#plt.plot(kR1_30/omega_s, w/omega_s, label = 'R30°', color = 'royalblue')
+#plt.plot(kR2_30/omega_s, w/omega_s, color = 'royalblue')
+#plt.plot(kR1_60/omega_s, w/omega_s, label = 'R60°', color = 'dodgerblue')
+#plt.plot(kR2_60/omega_s, w/omega_s, color = 'dodgerblue')
+#plt.plot(w/c/omega_s, w/omega_s, label = 'w = ck/100', linestyle = 'dashed',color = 'gold')
+plt.plot(k_energy(w, 1.6e-19, 0, 100)/omega_s, w/omega_s, label = '1 eV, θ=0°', color = 'c')
+plt.plot(k_energy(w, 1.6e-19, 60, 100)/omega_s, w/omega_s, label = '1 eV, θ=60°', color = 'm')
+#plt.hlines(omega_h/omega_s, 0, 1e-3, linestyles='dashed', colors = 'k')
+#plt.hlines(omega_he/omega_s, 0, 1e-3, linestyles='dashed', colors = 'k')
+plt.hlines(omega_o/omega_s, 0, 1e-3, linestyles='dashed', colors = 'k')
+#plt.hlines(pi_h/omega_s, 0, 1e-3, linestyles='dashed')
 #plt.hlines(-omega_e/omega_s, 0, 1, linestyles='dashed')
-#plt.hlines(pi_h/omega_s, 0, 1, linestyles='dashed')
 #plt.hlines(pi_he/omega_s, 0, 1, linestyles='dashed')
 #plt.hlines(pi_o/omega_s, 0, 1, linestyles='dashed')
 #plt.hlines(wlh/omega_s, 0, 1, colors='black', linestyles='dashed')
 plt.xscale('log')
+plt.yscale('log')
 plt.xlabel(r'$k [/m]$')
 plt.ylabel(r'$\omega [Hz]$')
+plt.xlim(1e-7, 1e-5)
+plt.ylim(3, 11)
 plt.legend()
 plt.show()
 
@@ -159,7 +177,8 @@ plt.hlines(omega_o/omega_s, 0, 1e12, colors = 'k',linestyles='dashed')
 plt.xlabel('$Energy [eV]$')
 plt.ylabel('$\omega [Hz]$')
 plt.xscale('log')
-plt.xlim(0.1, 1e4)
+plt.yscale('log')
+plt.xlim(1, 1e2)
 plt.title('$\theta$=' + str(theta) + '°')
 plt.legend()
 plt.show() 
