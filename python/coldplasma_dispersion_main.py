@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.core.function_base import linspace
-#event1 parameter
-ne = 6e+7
-nh = 0.46*ne
-nhe = 0.11*ne
-no = 0.43*ne
+#Ishigaya event4
+ne = 225e6
+nh = 0.32*ne
+nhe = 0.19*ne
+no = 0.56*ne
 q = 1.6e-19
 eps = 8.9e-12
 myu = 1.3e-6
@@ -15,18 +15,21 @@ mh = 1.7e-27
 mhe = 6.7e-27
 mo = 2.7e-26
 rho = mo*no + mh*nh + mhe*nhe
-B0 = 9e-6
 c = 3e+8
 
 pi_e = (ne*q**2/(eps*me))**0.5
 pi_h = (nh*q**2/(eps*mh))**0.5
 pi_he = (nhe*q**2/(eps*mhe))**0.5
 pi_o = (no*q**2/(eps*mo))**0.5
+
+omega_o = 2*np.pi*6
+B0 = omega_o*mo/q
 omega_e = -q*B0/me
 omega_h = q*B0/mh
 omega_he = q*B0/mhe
-omega_o = q*B0/mo
 
+
+print(B0, omega_h)
 def dispersion(theta, w):
     Xe = (pi_e/w)**2
     Xh = (pi_h/w)**2
@@ -102,51 +105,81 @@ def k_energy(w, E, theta, alpha):
     return k_energy
 
 #dispersion calc
-omega_s = omega_o
-w = omega_s*np.arange(0.1, 1.2, 0.0001) 
+omega_s = np.abs(omega_e)
+w = omega_s*np.arange(1e-6, 1, 1e-5) 
+
 
 va = 1e7
 wuh = (omega_e**2 + pi_e**2)**0.5
-wlh = ((pi_h**2 + pi_he**2 + pi_o**2) / (1 + (pi_e/omega_e)**2 ))**0.5
+wlh = (1/(-omega_e*omega_h) + 1/pi_h**2)**-0.5
 kL1_0, kL2_0, kR1_0, kR2_0, kl1, kl2 = dispersion(np.deg2rad(0), w)
 #kL1_30, kL2_30, kR1_30, kR2_30, kl1, kl2 = dispersion(np.deg2rad(30), w)
 kL1_60, kL2_60, kR1_60, kR2_60, kl1, kl2 = dispersion(np.deg2rad(60), w)
+kL1_90, kL2_90, kR1_90, kR2_90, kl1, kl2 = dispersion(np.deg2rad(90), w)
 
+print(pi_e/-omega_e)
 omega_s = 2*np.pi
+'''
 plt.figure()
 plt.rcParams["font.size"] = 14
+plt.plot(w/1e7/omega_s, w/omega_s, label = 'w/k = Va', linestyle = 'dashed',color = 'k')
 plt.plot(kL1_0/omega_s, w/omega_s, label = 'L0°', color = 'red')
 plt.plot(kL2_0/omega_s, w/omega_s, color = 'red')
 #plt.plot(kL1_30/omega_s, w/omega_s, label = 'L30°', color = 'orangered')
 #plt.plot(kL2_30/omega_s, w/omega_s, color = 'orangered')
-plt.plot(kL1_60/omega_s, w/omega_s, label = 'L60°', color = 'darkorange')
-plt.plot(kL2_60/omega_s, w/omega_s, color = 'darkorange')
-#plt.plot(kR1_0/omega_s, w/omega_s, label = 'R0°', color = 'blue')
-#plt.plot(kR2_0/omega_s, w/omega_s, color = 'blue')
+#plt.plot(kL1_60/omega_s, w/omega_s, label = 'L60°', color = 'darkorange')
+#plt.plot(kL2_60/omega_s, w/omega_s, color = 'darkorange')
+plt.plot(kL1_90/omega_s, w/omega_s, label = 'L90°', color = 'y')
+plt.plot(kL2_90/omega_s, w/omega_s, color = 'y')
+plt.plot(kR1_0/omega_s, w/omega_s, label = 'R0°', color = 'blue')
+plt.plot(kR2_0/omega_s, w/omega_s, color = 'blue')
 #plt.plot(kR1_30/omega_s, w/omega_s, label = 'R30°', color = 'royalblue')
 #plt.plot(kR2_30/omega_s, w/omega_s, color = 'royalblue')
 #plt.plot(kR1_60/omega_s, w/omega_s, label = 'R60°', color = 'dodgerblue')
 #plt.plot(kR2_60/omega_s, w/omega_s, color = 'dodgerblue')
+plt.plot(kR1_90/omega_s, w/omega_s, label = 'R90°', color = 'c')
+plt.plot(kR2_90/omega_s, w/omega_s, color = 'c')
 #plt.plot(w/c/omega_s, w/omega_s, label = 'w = ck/100', linestyle = 'dashed',color = 'gold')
-plt.plot(k_energy(w, 1.6e-19, 0, 100)/omega_s, w/omega_s, label = '1 eV, θ=0°', color = 'c')
-plt.plot(k_energy(w, 1.6e-19, 60, 100)/omega_s, w/omega_s, label = '1 eV, θ=60°', color = 'm')
-#plt.hlines(omega_h/omega_s, 0, 1e-3, linestyles='dashed', colors = 'k')
-#plt.hlines(omega_he/omega_s, 0, 1e-3, linestyles='dashed', colors = 'k')
+#plt.plot(k_energy(w, 1.6e-19, 0, 100)/omega_s, w/omega_s, label = '1 eV, θ=0°', color = 'c')
+#plt.plot(k_energy(w, 1.6e-19, 60, 100)/omega_s, w/omega_s, label = '1 eV, θ=60°', color = 'm')
+plt.hlines(omega_h/omega_s, 0, 1e-3, linestyles='dashed', colors = 'k')
+plt.hlines(omega_he/omega_s, 0, 1e-3, linestyles='dashed', colors = 'k')
 plt.hlines(omega_o/omega_s, 0, 1e-3, linestyles='dashed', colors = 'k')
 #plt.hlines(pi_h/omega_s, 0, 1e-3, linestyles='dashed')
-#plt.hlines(-omega_e/omega_s, 0, 1, linestyles='dashed')
+plt.hlines(-omega_e/omega_s, 0, 1, linestyles='dashed')
 #plt.hlines(pi_he/omega_s, 0, 1, linestyles='dashed')
 #plt.hlines(pi_o/omega_s, 0, 1, linestyles='dashed')
-#plt.hlines(wlh/omega_s, 0, 1, colors='black', linestyles='dashed')
+plt.hlines(wlh/omega_s, 0, 1, colors='black', linestyles='dashed')
 plt.xscale('log')
 plt.yscale('log')
 plt.xlabel(r'$k [/m]$')
 plt.ylabel(r'$\omega [Hz]$')
-plt.xlim(1e-7, 1e-5)
-plt.ylim(3, 11)
+#plt.xlim(1e-7, 1e-5)
+#plt.ylim(100, 1000)
+plt.legend()
+plt.show()
+'''
+plt.figure()
+plt.plot(w/(2*np.pi), w/kL1_0, label = 'L0°', color = 'red')
+plt.plot(w/(2*np.pi), w/kL2_0, color = 'red')
+plt.plot(w/(2*np.pi), w/kL1_90, label = 'L90°', color = 'tomato')
+plt.plot(w/(2*np.pi), w/kL2_90, color = 'tomato')
+plt.plot(w/(2*np.pi), w/kR1_0, label = 'R0°', color = 'blue')
+plt.plot(w/(2*np.pi), w/kR2_0, color = 'blue')
+plt.plot(w/(2*np.pi), w/kR1_90, label = 'R90°', color = 'c')
+plt.plot(w/(2*np.pi), w/kR2_90, color = 'c')
+plt.vlines(omega_h/omega_s, 1e4, 1e9, linestyles='dashed', colors = 'k')
+plt.vlines(wlh/omega_s, 1e4, 1e9, colors='black', linestyles='dashed')
+plt.xscale('log')
+plt.yscale('log')
+plt.xlabel('frequency [Hz]')
+plt.ylabel('Phase velocity [m/s]')
+plt.xlim(70, 3000)
+plt.ylim(1e6, 1e9)
 plt.legend()
 plt.show()
 
+'''
 #energy calc
 #pitch angle: H+:10-150, O+:20-120
 alphaH = np.arange(10, 160, 20)
@@ -186,3 +219,4 @@ plt.show()
 cm = plt.cm.get_cmap('RdYlBu')
 
 
+'''
